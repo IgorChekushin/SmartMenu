@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SmartMenu</string>
+    <string name="btnFridgeText">Fridge</string>
+    <string name="btnSearchText">Search</string>
+    <string name="tw_fridge_label">Please select the products</string>
+    <string name="tw_fridge_update">Update fridge</string>
+</resources>
