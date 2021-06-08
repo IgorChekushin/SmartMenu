@@ -51,7 +51,7 @@ class FridgeActivity : AppCompatActivity() {
                 }
             }
             listOfFood.sortBy { it.foodName }
-            listOfFood.sortByDescending { it.isSelected }
+            //listOfFood.sortByDescending { it.isSelected }
             //use adapter in custom ListView
             adapter = CustomFridgeAdapter(listOfFood, this, singleLiveDataEvent)
             listView.adapter = adapter
@@ -64,7 +64,7 @@ class FridgeActivity : AppCompatActivity() {
             //adapter.setItems(listOfFood)
             adapter.notifyDataSetChanged()
         })
-        
+
 
         //update SharedPreferences
         var items: List<String>
