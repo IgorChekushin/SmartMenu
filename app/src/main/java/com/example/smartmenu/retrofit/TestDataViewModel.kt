@@ -14,7 +14,7 @@ class TestDataViewModel : ViewModel(){
 
     private val scope = CoroutineScope(coroutineContext)
 
-    private val repository : TestDataRepository = TestDataRepository(ApiFactory.googleDriveApi)
+    private val repository : TestDataRepository = TestDataRepository(ApiFactory.GOOGLE_DRIVE_API)
 
 
     val testDataLiveData = MutableLiveData<MutableList<TestData>>()

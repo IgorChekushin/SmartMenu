@@ -1,6 +1,6 @@
 package com.example.smartmenu.retrofit
 
-class TestDataRepository(private val api : GDriveApi) : BaseRepository() {
+class TestDataRepository(private val api : TestApi) : BaseRepository() {
 
     suspend fun getTestData() : MutableList<TestData>?{
 

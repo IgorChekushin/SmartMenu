@@ -39,6 +39,6 @@ object ApiFactory{
         .build()
 
 
-    val googleDriveApi : GDriveApi = retrofit().create(GDriveApi::class.java)
+    val GOOGLE_DRIVE_API : TestApi = retrofit().create(TestApi::class.java)
 
 }
