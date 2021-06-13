@@ -1,16 +1,15 @@
 package com.example.smartmenu.google_drive_api
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import com.example.smartmenu.db.RecipeEntity
+import android.graphics.Bitmap
 import com.google.api.services.drive.model.File
-import com.google.api.services.drive.model.FileList
 
 class GoogleDriveAPIRepository(private val googleDriveAPI: GoogleDriveAPI) {
-    lateinit var allFoldersLiveData: List<File>
-
+    lateinit var allFolders: List<File>
+    var images : MutableList<Pair<String, Bitmap>> = mutableListOf()
     suspend fun getAllFolders(){
-        allFoldersLiveData = googleDriveAPI.getAllFolders()
+        allFolders = googleDriveAPI.getAllFolders()
+    }
+    suspend fun getImage(fileId: String){
+        images.add(googleDriveAPI.getImage(fileId))
     }
 }

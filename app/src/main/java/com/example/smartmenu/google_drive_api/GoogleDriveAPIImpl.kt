@@ -1,5 +1,8 @@
 package com.example.smartmenu.google_drive_api
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
@@ -23,11 +26,15 @@ class GoogleDriveAPIImpl(private val mDriveService: Drive) : GoogleDriveAPI {
     private val scope = CoroutineScope(coroutineContext)
 
 
-    override suspend fun getAllFolders(): List<File>{
-        var data = FileList()
-//        scope.launch{
-            data = mDriveService.files().list().setSpaces("drive").execute()
-//        }
-        return data.files
+    override suspend fun getAllFolders(): MutableList<File> =
+        mDriveService.files().list().setSpaces("drive").execute().files
+
+
+    override suspend fun getImage(fileId: String): Pair<String, Bitmap> {
+        val metadata = mDriveService.files().get(fileId).execute()
+
+        val inputStream = mDriveService.files().get(fileId).executeMediaAsInputStream().readBytes()
+        val image = BitmapFactory.decodeByteArray(inputStream, 0, inputStream.size)
+        return Pair(metadata.name, image)
     }
 }

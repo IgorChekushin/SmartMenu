@@ -40,10 +40,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         requestSignIn()
         singleLiveDataEvent = SingleLiveEvent()
         singleLiveDataEvent.observe(this, {
-            testDataViewModel.fetchFolders()
-            testDataViewModel.allFolders.observe(this, {
+            testDataViewModel.downloadImage("10YD_DZXGsuwKEGqPrbJzFgxXuoiR26SW")
+            testDataViewModel.allImages.observe(this, {
                 Log.d("SUCCESS", "Count = ${it.count()}")
                 Toast.makeText(this, "Count = ${it.count()}", Toast.LENGTH_SHORT).show()
+                testImage.setImageBitmap(it[0].second)
             })
         })
 

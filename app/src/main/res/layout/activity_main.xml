@@ -31,6 +31,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnFridge"
         android:backgroundTint="@color/green"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/bthSearch"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/testImage"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

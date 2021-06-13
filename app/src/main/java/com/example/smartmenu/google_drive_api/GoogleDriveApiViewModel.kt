@@ -1,17 +1,10 @@
 package com.example.smartmenu.google_drive_api
 
 import android.app.Application
+import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.example.smartmenu.db.RecipeDatabase
-import com.example.smartmenu.db.RecipeEntity
-import com.example.smartmenu.db.RecipeRepository
-import com.example.smartmenu.retrofit.ApiFactory
-import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
-import com.google.api.services.drive.model.FileList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,19 +19,19 @@ class GoogleDriveApiViewModel(val app: Application, googleDriveAPI: GoogleDriveA
     private val scope = CoroutineScope(coroutineContext)
 
     var allFolders: MutableLiveData<List<File>> = MutableLiveData()
+    var allImages: MutableLiveData<MutableList<Pair<String, Bitmap>>> = MutableLiveData()
     private val repository: GoogleDriveAPIRepository = GoogleDriveAPIRepository(googleDriveAPI)
-
-    init {
-//       // val googleDriveAPI = GoogleDriveAPIFactory(app).googleDriveAPIImpl
-//        val repository = GoogleDriveAPIRepository(googleDriveAPI)
-
-        //    }
-    }
 
     fun fetchFolders() {
         scope.launch {
             repository.getAllFolders()
-            allFolders.postValue(repository.allFoldersLiveData)
+            allFolders.postValue(repository.allFolders)
+        }
+    }
+    fun downloadImage(fileId: String) {
+        scope.launch {
+            repository.getImage(fileId)
+            allImages.postValue(repository.images)
         }
     }
 }
