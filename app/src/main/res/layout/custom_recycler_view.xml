@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:textColor="#000000"
 
         android:textColorLink="#100F0F"
@@ -21,7 +20,7 @@
         android:id="@+id/dishImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
          />
 
     <hakobastvatsatryan.DropdownTextView
@@ -30,10 +29,20 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         app:title_text="Description"
+        app:title_text_size="@dimen/recipeDescTitle"
+
         app:bg_drawable_regular="@drawable/bg_dropdown_text_view_regular"
         app:bg_drawable_expanded="@drawable/bd_dropdown_text_view_expanded"
         app:title_text_color="@color/black"
         app:underline_link="false"
         app:content_text_color="@color/black"/>
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:paddingTop="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray" />
 
 </LinearLayout>
