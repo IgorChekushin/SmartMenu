@@ -3,10 +3,6 @@ package com.example.smartmenu.fridge
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Message
-import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -52,7 +48,7 @@ class FridgeActivity : AppCompatActivity() {
             listOfFood.sortBy { it.foodName }
             //listOfFood.sortByDescending { it.isSelected }
             //use adapter in custom ListView
-            adapter = CustomFridgeAdapter(listOfFood, this, singleLiveDataEvent)
+            adapter = CustomFridgeAdapter(listOfFood, singleLiveDataEvent)
             listView.adapter = adapter
         })
 

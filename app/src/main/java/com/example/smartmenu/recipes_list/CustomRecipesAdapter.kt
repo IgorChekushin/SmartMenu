@@ -1,18 +1,15 @@
 package com.example.smartmenu.recipes_list
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartmenu.R
-import com.squareup.picasso.Picasso
 import hakobastvatsatryan.DropdownTextView
 
-class CustomRecipesAdapter(private var context: Context, private val listOfRecipes: List<Recipe>) :
+class CustomRecipesAdapter(private val listOfRecipes: List<Recipe>) :
     RecyclerView.Adapter<CustomRecipesAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recipeName: TextView = itemView.findViewById(R.id.dishName)

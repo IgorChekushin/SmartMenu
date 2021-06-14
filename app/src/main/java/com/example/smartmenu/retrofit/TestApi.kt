@@ -6,5 +6,5 @@ import retrofit2.http.GET
 
 interface TestApi {
     @GET("posts")
-    fun getTestData(): Deferred<Response<List<TestData>>>
+    fun getTestDataAsync(): Deferred<Response<List<TestData>>>
 }

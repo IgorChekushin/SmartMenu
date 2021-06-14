@@ -1,6 +1,5 @@
 package com.example.smartmenu.fridge
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,10 @@ import com.example.smartmenu.R
 import com.example.smartmenu.SingleLiveEvent
 
 
-class CustomFridgeAdapter(private val listOfItems: List<FoodItem>, context: Context, private val  singleLiveEvent: SingleLiveEvent<Pair<Int, Boolean>>) :
+class CustomFridgeAdapter(
+    private val listOfItems: List<FoodItem>,
+    private val singleLiveEvent: SingleLiveEvent<Pair<Int, Boolean>>
+) :
     BaseAdapter() {
     override fun getCount() = listOfItems.size
 
@@ -28,23 +30,23 @@ class CustomFridgeAdapter(private val listOfItems: List<FoodItem>, context: Cont
         val checkedTextView = row
             ?.findViewById<View>(R.id.adaptertextview) as TextView
         val isCheckedTextView = row
-            ?.findViewById<View>(R.id.adaptercheckbox) as CheckBox
+            .findViewById<View>(R.id.adaptercheckbox) as CheckBox
         checkedTextView.text = listOfItems[position].foodName
 
         val myCheckChangList: CompoundButton.OnCheckedChangeListener =
             CompoundButton.OnCheckedChangeListener {
-                    buttonView, isChecked -> // меняем данные товара (в корзине или нет)
+                    _, isChecked -> // меняем данные товара (в корзине или нет)
                 //listOfItems[position].isSelected = isChecked
                 singleLiveEvent.postValue(Pair(position, isChecked))
             }
 
-        isCheckedTextView.setOnCheckedChangeListener(myCheckChangList);
+        isCheckedTextView.setOnCheckedChangeListener(myCheckChangList)
         val checked: Boolean = listOfItems[position].isSelected
         if (checked != null) {
             isCheckedTextView.isChecked = checked
         }
 
-        return row!!
+        return row
     }
 
     fun getCheckedItemPositions() = listOfItems.filter { it.isSelected }.map { it.foodName }

@@ -1,12 +1,9 @@
 package com.example.smartmenu.recipes_list
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,15 +22,14 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
-import kotlinx.android.synthetic.main.activity_main.*
 
 private const val REQUEST_SIGN_IN = 1
 
 class RecipesActivity : AppCompatActivity() {
     private lateinit var vm: RecipeViewModel
-    lateinit var mDriveServiceHelper: GoogleDriveAPI
+    private lateinit var mDriveServiceHelper: GoogleDriveAPI
     lateinit var singleLiveDataEvent: SingleLiveEvent<Boolean>
-    lateinit var googleDriveAPIViewModel: GoogleDriveApiViewModel
+    private lateinit var googleDriveAPIViewModel: GoogleDriveApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +38,6 @@ class RecipesActivity : AppCompatActivity() {
         val listOfRecipes =
             mutableListOf<Recipe>()
         //Create adapter for recipes
-        lateinit var adapter: CustomRecipesAdapter
 
         //get shared preferences
         val prefs = Prefs(this)
@@ -54,7 +49,7 @@ class RecipesActivity : AppCompatActivity() {
         singleLiveDataEvent = SingleLiveEvent()
         //update list of recipes if data base was update
         singleLiveDataEvent.observe(this, {
-            vm.allRecipes.observe(this, Observer { items ->
+            vm.allRecipes.observe(this, { items ->
                 if (items.isEmpty()) {
 
                     vm.insert(
@@ -125,19 +120,19 @@ class RecipesActivity : AppCompatActivity() {
 
                 }
 
-                for (it in items) {
-                    if (it.ingredients.split(",") intersects prefs.actualFoodList) {
-                        val imageName = it.dish
+                for (item in items) {
+                    if (item.ingredients.split(",") intersects prefs.actualFoodList) {
+                        val imageName = item.dish
 
                         //Download image from GoogleDrive API
-                        googleDriveAPIViewModel.downloadImage(it.image)
+                        googleDriveAPIViewModel.downloadImage(item.image)
 
                         googleDriveAPIViewModel.allImages.observe(this, { itList ->
                             val image = itList.find { it.first == "$imageName.png" }!!.second
-                            listOfRecipes.add(Recipe(it.dish, it.description, image))
+                            listOfRecipes.add(Recipe(item.dish, item.description, image))
                             //use adapter for custom RecyclerView
                             rwSearchResult.layoutManager = LinearLayoutManager(this)
-                            rwSearchResult.adapter = CustomRecipesAdapter(this, listOfRecipes)
+                            rwSearchResult.adapter = CustomRecipesAdapter(listOfRecipes)
                         })
                     }
                 }
@@ -200,7 +195,7 @@ class RecipesActivity : AppCompatActivity() {
                     ViewModelProvider(this).get(GoogleDriveApiViewModel::class.java)
                 singleLiveDataEvent.postValue(true)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 Log.e("Tag", "Signing error")
             }
     }

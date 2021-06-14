@@ -17,7 +17,7 @@ class TestDataViewModel : ViewModel(){
     private val repository : TestDataRepository = TestDataRepository(ApiFactory.GOOGLE_DRIVE_API)
 
 
-    val testDataLiveData = MutableLiveData<MutableList<TestData>>()
+    private val testDataLiveData = MutableLiveData<MutableList<TestData>>()
 
     fun fetchMovies(){
         scope.launch {
