@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <TextView
@@ -24,16 +24,16 @@
         android:paddingBottom="10dp"
          />
 
-    <TextView
+    <hakobastvatsatryan.DropdownTextView
         android:id="@+id/dishDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:textColorLink="#040404"
-        android:gravity="center"/>
-    <View
-        android:id="@+id/view1"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:gravity="center"
+        app:title_text="Description"
+        app:bg_drawable_regular="@drawable/bg_dropdown_text_view_regular"
+        app:bg_drawable_expanded="@drawable/bd_dropdown_text_view_expanded"
+        app:title_text_color="@color/black"
+        app:underline_link="false"
+        app:content_text_color="@color/black"/>
+
 </LinearLayout>

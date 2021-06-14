@@ -21,7 +21,9 @@ class GoogleDriveApiViewModel(val app: Application, googleDriveAPI: GoogleDriveA
     var allFolders: MutableLiveData<List<File>> = MutableLiveData()
     var allImages: MutableLiveData<MutableList<Pair<String, Bitmap>>> = MutableLiveData()
     private val repository: GoogleDriveAPIRepository = GoogleDriveAPIRepository(googleDriveAPI)
-
+//init {
+//    allImages.postValue(mutableListOf())
+//}
     fun fetchFolders() {
         scope.launch {
             repository.getAllFolders()

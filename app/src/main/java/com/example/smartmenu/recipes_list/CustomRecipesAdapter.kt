@@ -10,12 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartmenu.R
 import com.squareup.picasso.Picasso
+import hakobastvatsatryan.DropdownTextView
 
 class CustomRecipesAdapter(private var context: Context, private val listOfRecipes: List<Recipe>) :
     RecyclerView.Adapter<CustomRecipesAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val recipeName: TextView = itemView.findViewById(R.id.dishName)
-        val recipeDescription: TextView = itemView.findViewById(R.id.dishDesc)
+        val recipeDescription: DropdownTextView = itemView.findViewById(R.id.dishDesc)
         val recipeImage: ImageView = itemView.findViewById(R.id.dishImage)
     }
 
@@ -29,8 +30,9 @@ class CustomRecipesAdapter(private var context: Context, private val listOfRecip
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val recipe = listOfRecipes[position]
         holder.recipeName.text = recipe.name
-        holder.recipeDescription.text = recipe.description
-        Picasso.with(context).load(recipe.image).into(holder.recipeImage)
+        holder.recipeDescription.setContentText(recipe.description)
+        //Picasso.with(context).load(recipe.image).into(holder.recipeImage)
+        holder.recipeImage.setImageBitmap(recipe.image)
     }
 
     override fun getItemCount() = listOfRecipes.size

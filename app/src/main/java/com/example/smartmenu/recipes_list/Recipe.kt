@@ -1,3 +1,5 @@
 package com.example.smartmenu.recipes_list
 
-data class Recipe(val name: String, val description: String, val image: String)
+import android.graphics.Bitmap
+
+data class Recipe(val name: String, val description: String, val image: Bitmap)

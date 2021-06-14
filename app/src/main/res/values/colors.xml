@@ -10,4 +10,5 @@
     <color name="blue">#0000FF</color>
     <color name="green">#008000</color>
     <dimen name="recipeName">20sp</dimen>
+    <color name="light_green">#A8E4A0</color>
 </resources>

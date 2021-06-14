@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.smartmenu.fridge.FridgeActivity
 import com.example.smartmenu.google_drive_api.GoogleDriveAPI
 import com.example.smartmenu.google_drive_api.GoogleDriveAPIImpl
 import com.example.smartmenu.google_drive_api.GoogleDriveApiViewModel
@@ -20,6 +21,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
+import hakobastvatsatryan.DropdownTextView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
@@ -27,8 +29,6 @@ import kotlinx.coroutines.*
 private const val TAG = "MainActivity"
 
 private const val REQUEST_SIGN_IN = 1
-private const val REQUEST_CODE_OPEN_DOCUMENT = 2
-private var testFileList = "1"
 
 class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     lateinit var testDataViewModel: GoogleDriveApiViewModel
@@ -37,16 +37,22 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        requestSignIn()
-        singleLiveDataEvent = SingleLiveEvent()
-        singleLiveDataEvent.observe(this, {
-            testDataViewModel.downloadImage("10YD_DZXGsuwKEGqPrbJzFgxXuoiR26SW")
-            testDataViewModel.allImages.observe(this, {
-                Log.d("SUCCESS", "Count = ${it.count()}")
-                Toast.makeText(this, "Count = ${it.count()}", Toast.LENGTH_SHORT).show()
-                testImage.setImageBitmap(it[0].second)
-            })
-        })
+//        val dropDown = DropdownTextView.Builder(this)
+//            .setTitleTextRes(R.string.btnFridgeText)
+//            .setContentTextRes(R.string.btnSearchText)
+//            .build()
+        //testDropDown.setTitleText(R.string.btnFridgeText)
+        //testDropDown.setContentText(R.string.btnSearchText)
+//        requestSignIn()
+//        singleLiveDataEvent = SingleLiveEvent()
+//        singleLiveDataEvent.observe(this, {
+//            testDataViewModel.downloadImage("10YD_DZXGsuwKEGqPrbJzFgxXuoiR26SW")
+//            testDataViewModel.allImages.observe(this, {
+//                Log.d("SUCCESS", "Count = ${it.count()}")
+//                Toast.makeText(this, "Count = ${it.count()}", Toast.LENGTH_SHORT).show()
+//                testImage.setImageBitmap(it[0].second)
+//            })
+//        })
 
 
 //        testDataViewModel = ViewModelProvider(this).get(TestDataViewModel::class.java)
@@ -60,10 +66,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 //        })
 
 
-//        btnFridge.setOnClickListener {
-//            val intent = Intent(this, FridgeActivity::class.java)
-//            startActivity(intent)
-//        }
+        btnFridge.setOnClickListener {
+            val intent = Intent(this, FridgeActivity::class.java)
+            startActivity(intent)
+        }
 
 
         bthSearch.setOnClickListener {
