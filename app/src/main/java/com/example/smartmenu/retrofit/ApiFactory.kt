@@ -25,20 +25,21 @@ object ApiFactory{
     }
 
     //OkhttpClient for building http request url
-    private val googleDriveClient = OkHttpClient().newBuilder()
+    private val herokuClient = OkHttpClient().newBuilder()
         .addInterceptor(authInterceptor)
         .build()
 
 
 
     private fun retrofit() : Retrofit = Retrofit.Builder()
-        .client(googleDriveClient)
-        .baseUrl("https://jsonplaceholder.typicode.com")
+        .client(herokuClient)
+        .baseUrl("https://salty-headland-27091.herokuapp.com")
+        //.baseUrl("https://jsonplaceholder.typicode.com")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
 
 
-    val GOOGLE_DRIVE_API : TestApi = retrofit().create(TestApi::class.java)
+    val herokuApi : HerokuApi = retrofit().create(HerokuApi::class.java)
 
 }

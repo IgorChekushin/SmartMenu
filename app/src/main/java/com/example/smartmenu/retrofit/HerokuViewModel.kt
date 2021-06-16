@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class TestDataViewModel : ViewModel(){
+class HerokuViewModel : ViewModel(){
 
     private val parentJob = Job()
 
@@ -14,15 +14,14 @@ class TestDataViewModel : ViewModel(){
 
     private val scope = CoroutineScope(coroutineContext)
 
-    private val repository : TestDataRepository = TestDataRepository(ApiFactory.GOOGLE_DRIVE_API)
+    private val repository : HerokuRepository = HerokuRepository(ApiFactory.herokuApi)
 
+    val recipesLiveData = MutableLiveData<MutableList<ResponseBody>>()
 
-    private val testDataLiveData = MutableLiveData<MutableList<TestData>>()
-
-    fun fetchMovies(){
+    fun fetchRecipes(ingredients : List<String>){
         scope.launch {
-            val popularMovies = repository.getTestData()
-            testDataLiveData.postValue(popularMovies!!)
+            val recipes = repository.getAllRecipes(ingredients)
+            recipesLiveData.postValue(recipes!!)
         }
     }
 
