@@ -4,22 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.smartmenu.*
-import com.example.smartmenu.db.RecipeEntity
-import com.example.smartmenu.db.RecipeViewModel
+import com.example.smartmenu.db.IngredientViewModel
+import com.example.smartmenu.fridge.FridgeActivity
 import com.example.smartmenu.google_drive_api.GoogleDriveAPI
 import com.example.smartmenu.google_drive_api.GoogleDriveAPIImpl
 import com.example.smartmenu.google_drive_api.GoogleDriveApiViewModel
+import com.example.smartmenu.google_drive_api.LoadingImagesState
+import com.example.smartmenu.google_drive_api.LoadingImagesState.*
 import com.example.smartmenu.retrofit.HerokuViewModel
+import com.example.smartmenu.retrofit.set
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -31,19 +36,21 @@ private const val REQUEST_SIGN_IN = 1
 
 class RecipesActivity : AppCompatActivity() {
     //private lateinit var vm: RecipeViewModel
-    private lateinit var recipeViewModel : HerokuViewModel
+    private lateinit var herokuViewModel : HerokuViewModel
     private lateinit var mDriveServiceHelper: GoogleDriveAPI
     lateinit var singleLiveDataEvent: SingleLiveEvent<Boolean>
     lateinit var singleLiveDataEvent2Recycler: SingleLiveEvent<Boolean>
     private lateinit var googleDriveAPIViewModel: GoogleDriveApiViewModel
+    private lateinit var ingredientViewModel: IngredientViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipes)
-        Glide.with(this)
-            .asGif()
-            .load("file:///android_asset/loading.gif")
-            .into(waitGIF)
+
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.nav_view2)
+        bottomNavigation.selectedItemId = R.id.recipes
+        bottomNavigation.setOnNavigationItemSelectedListener(navigationBar)
+
 
 
         requestSignIn()
@@ -55,7 +62,7 @@ class RecipesActivity : AppCompatActivity() {
 
         //get recipe view model
         //vm = ViewModelProvider(this).get(RecipeViewModel::class.java)
-        recipeViewModel = ViewModelProvider(this).get(HerokuViewModel::class.java)
+        herokuViewModel = ViewModelProvider(this).get(HerokuViewModel::class.java)
 
         val rwSearchResult: RecyclerView = findViewById(R.id.rw_search_result)
 
@@ -65,12 +72,24 @@ class RecipesActivity : AppCompatActivity() {
 
 
         //Get actual recipes
-        recipeViewModel.fetchRecipes(prefs.actualFoodList)
+        herokuViewModel.fetchRecipes(prefs.actualFoodList)
+
 
 
         singleLiveDataEvent.observe(this, {
-            recipeViewModel.recipesLiveData.observe(this, { items ->
+            googleDriveAPIViewModel.loadingImagesState.observe(this, Observer {
+                when(it){
+                    is ErrorState -> errorView()
+                    is LoadingState -> loadingView()
+                    is LoadedState -> loadedView()
+                    is NoItemsState -> noItemView()
+                }
+            })
 
+            herokuViewModel.recipesLiveData.observe(this, { items ->
+                if(items.count() == 0) {
+                    googleDriveAPIViewModel.loadingImagesState.set(LoadingImagesState.NoItemsState)
+                }
                 var countMaxDishes = 0
                 var countAllDishes = 0;
                 for (it in items) {
@@ -85,25 +104,21 @@ class RecipesActivity : AppCompatActivity() {
                             if(itList.any { it.first == "$imageName.png" }) {
                                 val image = itList.find { it.first == "$imageName.png" }!!.second
                                 if (listOfRecipes.all { it.name != imageName }) {
-                                    listOfRecipes.add(Recipe(it.name, it.description, image))
+                                    listOfRecipes.add(Recipe(it.name, it.description, image!!))
                                     if(countAllDishes == items.count()){
                                         if(listOfRecipes.count()  == countMaxDishes){
                                             //use adapter for custom RecyclerView
                                             singleLiveDataEvent2Recycler.postValue(true)
+                                            googleDriveAPIViewModel.loadingImagesState.set(LoadingImagesState.LoadedState)
                                         }
                                     }
-
                                 }
                             }
                         })
-
                     }
-
             })
             singleLiveDataEvent2Recycler.observe(this,{
                 listOfRecipes.sortBy { it.name }
-                waitTextView.text = ""
-                waitGIF.setImageDrawable(null)
                 rwSearchResult.layoutManager = LinearLayoutManager(this)
                 rwSearchResult.adapter = CustomRecipesAdapter(listOfRecipes)
             })
@@ -112,6 +127,21 @@ class RecipesActivity : AppCompatActivity() {
     }
 
 
+    private val navigationBar = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        when (item.itemId) {
+            R.id.recipes -> {
+                val intent = Intent(this@RecipesActivity, RecipesActivity::class.java)
+                startActivity(intent)
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.fridge -> {
+                val intent = Intent(this@RecipesActivity, FridgeActivity::class.java)
+                startActivity(intent)
+                return@OnNavigationItemSelectedListener true
+            }
+        }
+        false
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d("Tag", "onActivityResult=$requestCode")
         when (requestCode) {
@@ -175,6 +205,28 @@ class RecipesActivity : AppCompatActivity() {
     private fun requestSignIn() {
         val client = buildGoogleSignInClient()
         startActivityForResult(client.signInIntent, REQUEST_SIGN_IN)
+    }
+
+    //Render view
+    private fun errorView(){
+        loadingStateTextView.text = getString(R.string.tw_recipes_loading_error)
+        waitGIF.setImageDrawable(null)
+    }
+    private fun loadingView(){
+        loadingStateTextView.text = getString(R.string.tw_recipes_loading)
+        Glide.with(this)
+            .asGif()
+            .load("file:///android_asset/loading.gif")
+            .into(waitGIF)
+
+    }
+    private fun loadedView(){
+        loadingStateTextView.text = getString(R.string.tw_recipes_loaded)
+        waitGIF.setImageDrawable(null)
+    }
+    private fun noItemView(){
+        loadingStateTextView.text = getString(R.string.tw_recipes_loading_no_items)
+        waitGIF.setImageDrawable(null)
     }
 }
 

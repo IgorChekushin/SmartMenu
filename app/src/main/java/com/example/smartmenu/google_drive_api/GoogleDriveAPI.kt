@@ -5,5 +5,5 @@ import com.google.api.services.drive.model.File
 
 interface GoogleDriveAPI {
     suspend fun getAllFolders(): List<File>
-    suspend fun getImage(fileId: String): Pair<String, Bitmap>
+    suspend fun getImage(fileId: String): Pair<String, Bitmap?>
 }

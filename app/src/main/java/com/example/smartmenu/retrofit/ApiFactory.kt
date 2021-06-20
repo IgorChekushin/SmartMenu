@@ -13,7 +13,6 @@ object ApiFactory{
     private val authInterceptor = Interceptor {chain->
         val newUrl = chain.request().url()
             .newBuilder()
-            //.addQueryParameter("api_key", AppConstants.tmdbApiKey)
             .build()
 
         val newRequest = chain.request()
@@ -34,7 +33,6 @@ object ApiFactory{
     private fun retrofit() : Retrofit = Retrofit.Builder()
         .client(herokuClient)
         .baseUrl("https://salty-headland-27091.herokuapp.com")
-        //.baseUrl("https://jsonplaceholder.typicode.com")
         .addConverterFactory(MoshiConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()

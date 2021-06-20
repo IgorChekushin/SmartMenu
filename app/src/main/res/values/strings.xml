@@ -4,5 +4,12 @@
     <string name="btnSearchText">Search</string>
     <string name="tw_fridge_label">Please select the products</string>
     <string name="tw_fridge_update">Update fridge</string>
-    <string name="tw_recipes_wait">Search for recipes...</string>
+    <string name="tw_recipes_loading">Search for recipes...</string>
+    <string name="tw_recipes_loading_error">Error, please try later</string>
+    <string name="tw_recipes_loaded"></string>
+    <string name="tw_recipes_loading_no_items">Recipes not found</string>
+    <string name="tw_ingredients_loading">Search ingredients...</string>
+    <string name="tw_ingredients_loading_error">Error, please try later</string>
+    <string name="tw_ingredients_loaded">Please choose your ingredients</string>
+    <string name="tw_ingredients_loading_no_items">New ingredients not found</string>
 </resources>

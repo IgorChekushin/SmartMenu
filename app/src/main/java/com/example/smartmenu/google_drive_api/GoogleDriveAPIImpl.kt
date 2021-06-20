@@ -11,10 +11,16 @@ class GoogleDriveAPIImpl(private val mDriveService: Drive) : GoogleDriveAPI {
         mDriveService.files().list().setSpaces("drive").execute().files
 
 
-    override suspend fun getImage(fileId: String): Pair<String, Bitmap> {
+    override suspend fun getImage(fileId: String): Pair<String, Bitmap?> {
         val metadata = mDriveService.files().get(fileId).execute()
         val inputStream = mDriveService.files().get(fileId).executeMediaAsInputStream().readBytes()
         val image = BitmapFactory.decodeByteArray(inputStream, 0, inputStream.size)
+        if(metadata != null && image !=null)
         return Pair(metadata.name, image)
+        else
+            return Pair(
+                "Error",
+                null
+            )
     }
 }

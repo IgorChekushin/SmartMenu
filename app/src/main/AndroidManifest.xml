@@ -4,7 +4,9 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name="com.example.smartmenu.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +15,7 @@
         android:theme="@style/Theme.SmartMenu"
         >
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".recipes_list.RecipesActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +25,7 @@
 
         </activity>
         <activity android:name=".fridge.FridgeActivity" />
-        <activity android:name=".recipes_list.RecipesActivity" />
+
     </application>
 
 </manifest>

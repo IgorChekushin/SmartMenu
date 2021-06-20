@@ -1,22 +1,21 @@
 package com.example.smartmenu.db
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [RecipeEntity::class], version = 1)
-abstract class RecipeDatabase : RoomDatabase() {
-    abstract fun recipeDao(): RecipeDao
+@Database(entities = [IngredientEntity::class], version = 1)
+abstract class IngredientDatabase : RoomDatabase() {
+    abstract fun recipeDao(): IngredientDao
     //Создать наследник Application и взять у него applicationContext
     //class MyApplication : Application()
 
     companion object {
         @Volatile
-        private var INSTANCE: RecipeDatabase? = null
+        private var INSTANCE: IngredientDatabase? = null
 
-        fun getInstance(context: Context): RecipeDatabase {
+        fun getInstance(context: Context): IngredientDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
@@ -24,12 +23,12 @@ abstract class RecipeDatabase : RoomDatabase() {
 
             //val myApp = MyApplication()
             //val myCtx = myApp.applicationContext
-            synchronized(RecipeDatabase::class) {
+            synchronized(IngredientDatabase::class) {
                 val instance = Room.databaseBuilder(
                     //myCtx,
                     context.applicationContext,
-                    RecipeDatabase::class.java,
-                    "recipe_database"
+                    IngredientDatabase::class.java,
+                    "ingredient_database"
                 )
                     .build()
 

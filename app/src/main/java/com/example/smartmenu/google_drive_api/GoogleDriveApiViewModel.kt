@@ -4,11 +4,11 @@ import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.smartmenu.retrofit.LoadingIngredientsViewState
+import com.example.smartmenu.retrofit.default
+import com.example.smartmenu.retrofit.set
 import com.google.api.services.drive.model.File
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class GoogleDriveApiViewModel(val app: Application, googleDriveAPI: GoogleDriveAPI) :
@@ -18,21 +18,26 @@ class GoogleDriveApiViewModel(val app: Application, googleDriveAPI: GoogleDriveA
         get() = parentJob + Dispatchers.IO
     private val scope = CoroutineScope(coroutineContext)
 
-    var allFolders: MutableLiveData<List<File>> = MutableLiveData()
-    var allImages: MutableLiveData<MutableList<Pair<String, Bitmap>>> = MutableLiveData()
+    var allImages: MutableLiveData<MutableList<Pair<String, Bitmap?>>> = MutableLiveData()
     private val repository: GoogleDriveAPIRepository = GoogleDriveAPIRepository(googleDriveAPI)
+    val loadingImagesState =
+        MutableLiveData<LoadingImagesState>().default(LoadingImagesState.LoadingState)
 
-    fun fetchFolders() {
-        scope.launch {
-            repository.getAllFolders()
-            allFolders.postValue(repository.allFolders)
-        }
-    }
     fun downloadImage(fileId: String) {
         scope.launch {
             repository.getImage(fileId)
-            allImages.postValue(repository.images)
+
+            if (repository.images == null) {
+                launch(Dispatchers.Main) {
+                    loadingImagesState.set(LoadingImagesState.ErrorState)
+                }
+            } else {
+                allImages.postValue(repository.images!!)
+            }
         }
     }
+
+
+    fun cancelAllRequests() = coroutineContext.cancel()
 }
 
