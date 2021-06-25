@@ -1,7 +1,6 @@
 package com.example.smartmenu
 
 import android.app.Application
-import com.example.smartmenu.db.IngredientDatabase
 
 class MyApp:Application() {
     var isUpdate = false
@@ -10,7 +9,7 @@ class MyApp:Application() {
 
 
         fun getInstance(): MyApp? {
-            val tempInstance = MyApp.INSTANCE
+            val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
             }

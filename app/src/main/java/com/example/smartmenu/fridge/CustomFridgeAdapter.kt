@@ -45,7 +45,6 @@ class CustomFridgeAdapter(
         if (checked != null) {
             isCheckedTextView.isChecked = checked
         }
-
         return row
     }
 

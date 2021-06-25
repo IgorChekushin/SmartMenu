@@ -5,7 +5,7 @@ class HerokuRepository(private val api: HerokuApi) : BaseRepository() {
     suspend fun getAllRecipes(ingredients: List<String>): MutableList<ResponseRecipeBody>? {
 
         val recipesResponse = safeApiCall(
-            call = { api.getAllRecipes(ingredients).await() },
+            call = { api.getAllRecipesAsync(ingredients).await() },
             errorMessage = "Error Fetching Popular Movies"
         )
 
@@ -15,7 +15,7 @@ class HerokuRepository(private val api: HerokuApi) : BaseRepository() {
     suspend fun getAllIngredients(): MutableList<ResponseIngredientsBody>? {
 
         val ingredientsResponse = safeApiCall(
-            call = { api.getAllIngredients().await() },
+            call = { api.getAllIngredientsAsync().await() },
             errorMessage = "Error Fetching Popular Movies"
         )
         return ingredientsResponse?.toMutableList()

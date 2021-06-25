@@ -28,7 +28,6 @@ class CustomRecipesAdapter(private val listOfRecipes: List<Recipe>) :
         val recipe = listOfRecipes[position]
         holder.recipeName.text = recipe.name
         holder.recipeDescription.setContentText(recipe.description)
-        //Picasso.with(context).load(recipe.image).into(holder.recipeImage)
         holder.recipeImage.setImageBitmap(recipe.image)
     }
 

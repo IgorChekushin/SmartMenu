@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken
 class Prefs(context: Context) {
     private val APP_PREF_NAME = "mySettings"
     private val APP_PREF_STRING_FOODLIST = "actualFoodList"
-    private val APP_PREF_BOOLEAN_UPDATE_STATUS = "actualUpdateStatus"
 
     private val preferences: SharedPreferences =
         context.getSharedPreferences(APP_PREF_NAME, Context.MODE_PRIVATE)
@@ -24,14 +23,6 @@ class Prefs(context: Context) {
             val gson = Gson()
             val json = gson.toJson(value)//converting list to Json
             preferences.edit().putString(APP_PREF_STRING_FOODLIST, json).apply()
-        }
-
-    var isUpdated: Boolean
-        get() {
-            return preferences.getBoolean(APP_PREF_BOOLEAN_UPDATE_STATUS, false)
-        }
-        set(value) {
-            preferences.edit().putBoolean(APP_PREF_BOOLEAN_UPDATE_STATUS, value).apply()
         }
 
 }

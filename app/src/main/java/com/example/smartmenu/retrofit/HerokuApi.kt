@@ -10,8 +10,8 @@ interface HerokuApi {
 //    @GET("posts")
 //    fun getTestDataAsync(): Deferred<Response<List<TestData>>>
 @POST("recipes/getAllRecipes")
-fun getAllRecipes(@Body requestBody: List<String>): Deferred<Response<List<ResponseRecipeBody>>>
+fun getAllRecipesAsync(@Body requestBody: List<String>): Deferred<Response<List<ResponseRecipeBody>>>
 
 @GET("recipes/getAllIngredients")
-fun getAllIngredients():Deferred<Response<List<ResponseIngredientsBody>>>
+fun getAllIngredientsAsync():Deferred<Response<List<ResponseIngredientsBody>>>
 }

@@ -15,10 +15,10 @@ class GoogleDriveAPIImpl(private val mDriveService: Drive) : GoogleDriveAPI {
         val metadata = mDriveService.files().get(fileId).execute()
         val inputStream = mDriveService.files().get(fileId).executeMediaAsInputStream().readBytes()
         val image = BitmapFactory.decodeByteArray(inputStream, 0, inputStream.size)
-        if(metadata != null && image !=null)
-        return Pair(metadata.name, image)
+        return if(metadata != null && image !=null)
+            Pair(metadata.name, image)
         else
-            return Pair(
+            Pair(
                 "Error",
                 null
             )

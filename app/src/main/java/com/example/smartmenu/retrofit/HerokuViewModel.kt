@@ -31,32 +31,27 @@ class HerokuViewModel : ViewModel() {
     }
 
 
-
-fun fetchIngredients() {
-    scope.launch {
-        val ingredients = repository.getAllIngredients()
-        if (ingredients == null) {
-            launch(Dispatchers.Main) {
-                loadingIngredientsState.set(LoadingIngredientsViewState.ErrorState)
-            }
-        } else {
-            if (ingredients.count() == 0) {
+    fun fetchIngredients() {
+        scope.launch {
+            val ingredients = repository.getAllIngredients()
+            if (ingredients == null) {
                 launch(Dispatchers.Main) {
-                    loadingIngredientsState.set(LoadingIngredientsViewState.NoItemsState)
+                    loadingIngredientsState.set(LoadingIngredientsViewState.ErrorState)
                 }
             } else {
-                launch(Dispatchers.Main) {
-                    loadingIngredientsState.set(LoadingIngredientsViewState.LoadedState)
+                if (ingredients.count() == 0) {
+                    launch(Dispatchers.Main) {
+                        loadingIngredientsState.set(LoadingIngredientsViewState.NoItemsState)
+                    }
+                } else {
+                    launch(Dispatchers.Main) {
+                        loadingIngredientsState.set(LoadingIngredientsViewState.LoadedState)
+                    }
+                    ingredientsLiveData.postValue(ingredients!!)
                 }
-                ingredientsLiveData.postValue(ingredients!!)
             }
         }
     }
-}
-
-
-fun cancelAllRequests() = coroutineContext.cancel()
-
 }
 
 fun <T : Any?> MutableLiveData<T>.default(initialValue: T) = apply { setValue(initialValue) }

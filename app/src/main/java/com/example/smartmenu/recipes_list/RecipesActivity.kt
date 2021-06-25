@@ -4,14 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.smartmenu.*
-import com.example.smartmenu.db.IngredientViewModel
+import com.example.smartmenu.databinding.ActivityRecipesBinding
 import com.example.smartmenu.fridge.FridgeActivity
 import com.example.smartmenu.google_drive_api.GoogleDriveAPI
 import com.example.smartmenu.google_drive_api.GoogleDriveAPIImpl
@@ -30,28 +29,26 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
-import kotlinx.android.synthetic.main.activity_recipes.*
 
 private const val REQUEST_SIGN_IN = 1
 
 class RecipesActivity : AppCompatActivity() {
-    //private lateinit var vm: RecipeViewModel
+    private lateinit var binding: ActivityRecipesBinding
     private lateinit var herokuViewModel : HerokuViewModel
     private lateinit var mDriveServiceHelper: GoogleDriveAPI
-    lateinit var singleLiveDataEvent: SingleLiveEvent<Boolean>
-    lateinit var singleLiveDataEvent2Recycler: SingleLiveEvent<Boolean>
+    private lateinit var singleLiveDataEvent: SingleLiveEvent<Boolean>
+    private lateinit var singleLiveDataEvent2Recycler: SingleLiveEvent<Boolean>
     private lateinit var googleDriveAPIViewModel: GoogleDriveApiViewModel
-    private lateinit var ingredientViewModel: IngredientViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_recipes)
+        binding = ActivityRecipesBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.nav_view2)
         bottomNavigation.selectedItemId = R.id.recipes
         bottomNavigation.setOnNavigationItemSelectedListener(navigationBar)
-
-
 
         requestSignIn()
         val listOfRecipes =
@@ -60,8 +57,7 @@ class RecipesActivity : AppCompatActivity() {
         //get shared preferences
         val prefs = Prefs(this)
 
-        //get recipe view model
-        //vm = ViewModelProvider(this).get(RecipeViewModel::class.java)
+        //get heroku view model
         herokuViewModel = ViewModelProvider(this).get(HerokuViewModel::class.java)
 
         val rwSearchResult: RecyclerView = findViewById(R.id.rw_search_result)
@@ -77,7 +73,7 @@ class RecipesActivity : AppCompatActivity() {
 
 
         singleLiveDataEvent.observe(this, {
-            googleDriveAPIViewModel.loadingImagesState.observe(this, Observer {
+            googleDriveAPIViewModel.loadingImagesState.observe(this, {
                 when(it){
                     is ErrorState -> errorView()
                     is LoadingState -> loadingView()
@@ -88,10 +84,10 @@ class RecipesActivity : AppCompatActivity() {
 
             herokuViewModel.recipesLiveData.observe(this, { items ->
                 if(items.count() == 0) {
-                    googleDriveAPIViewModel.loadingImagesState.set(LoadingImagesState.NoItemsState)
+                    googleDriveAPIViewModel.loadingImagesState.set(NoItemsState)
                 }
                 var countMaxDishes = 0
-                var countAllDishes = 0;
+                var countAllDishes = 0
                 for (it in items) {
                     countAllDishes++
                         val imageName = it.name
@@ -109,7 +105,9 @@ class RecipesActivity : AppCompatActivity() {
                                         if(listOfRecipes.count()  == countMaxDishes){
                                             //use adapter for custom RecyclerView
                                             singleLiveDataEvent2Recycler.postValue(true)
-                                            googleDriveAPIViewModel.loadingImagesState.set(LoadingImagesState.LoadedState)
+                                            googleDriveAPIViewModel.loadingImagesState.set(
+                                                LoadedState
+                                            )
                                         }
                                     }
                                 }
@@ -209,28 +207,27 @@ class RecipesActivity : AppCompatActivity() {
 
     //Render view
     private fun errorView(){
-        loadingStateTextView.text = getString(R.string.tw_recipes_loading_error)
-        waitGIF.setImageDrawable(null)
+        binding.loadingStateTextView.text = getString(R.string.tw_recipes_loading_error)
+        binding.waitGIF.setImageDrawable(null)
     }
     private fun loadingView(){
-        loadingStateTextView.text = getString(R.string.tw_recipes_loading)
+        binding.loadingStateTextView.text = getString(R.string.tw_recipes_loading)
         Glide.with(this)
             .asGif()
             .load("file:///android_asset/loading.gif")
-            .into(waitGIF)
+            .into(binding.waitGIF)
 
     }
     private fun loadedView(){
-        loadingStateTextView.text = getString(R.string.tw_recipes_loaded)
-        waitGIF.setImageDrawable(null)
+        binding.loadingStateTextView.text = getString(R.string.tw_recipes_loaded)
+        binding.waitGIF.setImageDrawable(null)
     }
     private fun noItemView(){
-        loadingStateTextView.text = getString(R.string.tw_recipes_loading_no_items)
-        waitGIF.setImageDrawable(null)
+        binding.loadingStateTextView.text = getString(R.string.tw_recipes_loading_no_items)
+        binding.waitGIF.setImageDrawable(null)
     }
 }
 
-infix fun <T : Any> List<T>.intersects(other: List<T>) = all(other::contains)
 
 inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
     object : ViewModelProvider.Factory {

@@ -1,7 +1,6 @@
 package com.example.smartmenu.google_drive_api
 
 import android.graphics.Bitmap
-import com.google.api.services.drive.model.File
 
 class GoogleDriveAPIRepository(private val googleDriveAPI: GoogleDriveAPI) {
     var images : MutableList<Pair<String, Bitmap?>>? = null

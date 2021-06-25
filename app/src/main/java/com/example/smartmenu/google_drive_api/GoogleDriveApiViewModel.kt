@@ -4,10 +4,8 @@ import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.example.smartmenu.retrofit.LoadingIngredientsViewState
 import com.example.smartmenu.retrofit.default
 import com.example.smartmenu.retrofit.set
-import com.google.api.services.drive.model.File
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -36,8 +34,5 @@ class GoogleDriveApiViewModel(val app: Application, googleDriveAPI: GoogleDriveA
             }
         }
     }
-
-
-    fun cancelAllRequests() = coroutineContext.cancel()
 }
 
