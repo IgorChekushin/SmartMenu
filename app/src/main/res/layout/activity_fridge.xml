@@ -21,7 +21,7 @@
         android:textColor="#0E0000"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:textSize="20sp"
+        android:textSize="@dimen/ingredientLabel"
 
         app:layout_constraintBottom_toTopOf="@+id/waitGIF2"
        />

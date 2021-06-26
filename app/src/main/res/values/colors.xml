@@ -12,5 +12,6 @@
     <color name="light_green">#A8E4A0</color>
     <dimen name="recipeName">20sp</dimen>
     <dimen name="recipeDescTitle">15sp</dimen>
+    <dimen name="ingredientLabel">20sp</dimen>
 
 </resources>
