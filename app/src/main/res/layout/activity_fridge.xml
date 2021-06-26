@@ -22,6 +22,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="@dimen/ingredientLabel"
+        android:textStyle="bold"
 
         app:layout_constraintBottom_toTopOf="@+id/waitGIF2"
        />
