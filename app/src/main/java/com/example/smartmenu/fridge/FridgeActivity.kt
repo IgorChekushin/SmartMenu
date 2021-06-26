@@ -12,47 +12,53 @@ import com.example.smartmenu.db.IngredientEntity
 import com.example.smartmenu.db.IngredientViewModel
 import com.example.smartmenu.recipes_list.RecipesActivity
 import com.example.smartmenu.retrofit.HerokuViewModel
-import com.example.smartmenu.retrofit.LoadingIngredientsViewState.*
+import com.example.smartmenu.view_states.LoadingViewState
+import com.example.smartmenu.view_states.LoadingViewState.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class FridgeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFridgeBinding
     private lateinit var ingredientViewModel: IngredientViewModel
-    private lateinit var singleLiveDataEvent2ListView: SingleLiveEvent<Boolean>
+    private lateinit var updateDataBaseEvent: SingleLiveEvent<Boolean>
+    private lateinit var adapterEvent: SingleLiveEvent<Pair<Int, Boolean>>
     private lateinit var herokuViewModel: HerokuViewModel
     private lateinit var adapter: CustomFridgeAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //binding
         super.onCreate(savedInstanceState)
         binding = ActivityFridgeBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
+        //config navigation bar
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.nav_view2)
         bottomNavigation.selectedItemId = R.id.fridge
         bottomNavigation.setOnNavigationItemSelectedListener(navigationBar)
 
+        //List of ingredients
         var listOfFood = mutableListOf<FoodItem>()
 
         //get actual food list in fridge from SharedPreferences
         val prefs = Prefs(this)
 
-        val singleLiveDataEvent = SingleLiveEvent<Pair<Int, Boolean>>()
-        singleLiveDataEvent2ListView = SingleLiveEvent()
-        //get recipe ViewModel
+        //initialise events
+        adapterEvent = SingleLiveEvent()
+        updateDataBaseEvent = SingleLiveEvent()
+
+        //initialise ViewModel
         ingredientViewModel = ViewModelProvider(this).get(IngredientViewModel::class.java)
         herokuViewModel = ViewModelProvider(this).get(HerokuViewModel::class.java)
+
+
         updateIngredientsDataBase()
         herokuViewModel.loadingIngredientsState.observe(this, {
-            when(it){
-                is ErrorState -> errorView()
-                is LoadingState -> loadingView()
-                is LoadedState -> loadedView()
-                is NoItemsState -> noItemView()
-            }
+            render(it)
         })
-        //First update list of ingredients
-        singleLiveDataEvent2ListView.observe(this, {
-            //Second show list of ingredients from db
+        //update list of ingredients
+        updateDataBaseEvent.observe(this, {
+            //show list of ingredients from db
             ingredientViewModel.allIngredients.observe(this, { items ->
 
                 //get all ingredients from db
@@ -72,48 +78,41 @@ class FridgeActivity : AppCompatActivity() {
                     }
                 }
                 listOfFood.sortBy { it.foodName }
-                //listOfFood.sortByDescending { it.isSelected }
+
                 //use adapter in custom ListView
-                adapter = CustomFridgeAdapter(listOfFood, singleLiveDataEvent)
+                adapter = CustomFridgeAdapter(listOfFood, adapterEvent)
                 binding.listView.adapter = adapter
             })
 
         })
 
-        singleLiveDataEvent.observe(this, {
+        adapterEvent.observe(this, {
             listOfFood[it.first].isSelected = it.second
-            //adapter.setItems(listOfFood)
             adapter.notifyDataSetChanged()
         })
     }
 
     private fun updateIngredientsDataBase() {
-//        val prefs = Prefs(this)
         if (!MyApp.getInstance()?.isUpdate!!) {
-            ingredientViewModel = ViewModelProvider(this).get(IngredientViewModel::class.java)
-            herokuViewModel = ViewModelProvider(this).get(HerokuViewModel::class.java)
             herokuViewModel.fetchIngredients()
             herokuViewModel.ingredientsLiveData.observe(this, {
                 for (ingredient in it) {
                     ingredientViewModel.insert(IngredientEntity(ingredient.name))
                 }
-
-                singleLiveDataEvent2ListView.postValue(true)
+                updateDataBaseEvent.postValue(true)
             })
-//            prefs.isUpdated = true
             MyApp.INSTANCE?.isUpdate = true
         } else {
-
-            singleLiveDataEvent2ListView.postValue(true)
+            updateDataBaseEvent.postValue(true)
         }
     }
+
     private val navigationBar = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.recipes -> {
                 val items: List<String> = adapter.getCheckedItemPositions()
                 val prefs = Prefs(this)
                 prefs.actualFoodList = items
-                finish()
                 val intent = Intent(this, RecipesActivity::class.java)
                 startActivity(intent)
                 return@OnNavigationItemSelectedListener true
@@ -126,27 +125,37 @@ class FridgeActivity : AppCompatActivity() {
         }
         false
     }
+
     //Render view
-    private fun errorView(){
+    private fun render(state: LoadingViewState) {
+        when (state) {
+            is ErrorState -> errorView()
+            is LoadingState -> loadingView()
+            is LoadedState -> loadedView()
+            is NoItemsState -> noItemView()
+        }
+    }
+
+    private fun errorView() {
         binding.twLabel.text = getString(R.string.tw_ingredients_loading_error)
         binding.waitGIF2.setImageDrawable(null)
     }
-    private fun loadingView(){
+
+    private fun loadingView() {
         binding.twLabel.text = getString(R.string.tw_ingredients_loading)
         Glide.with(this)
             .asGif()
             .load("file:///android_asset/loading.gif")
             .into(binding.waitGIF2)
-
     }
-    private fun loadedView(){
+
+    private fun loadedView() {
         binding.twLabel.text = getString(R.string.tw_ingredients_loaded)
         binding.waitGIF2.setImageDrawable(null)
     }
-    private fun noItemView(){
+
+    private fun noItemView() {
         binding.twLabel.text = getString(R.string.tw_ingredients_loading_no_items)
         binding.waitGIF2.setImageDrawable(null)
     }
-
 }
-

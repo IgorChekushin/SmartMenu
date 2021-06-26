@@ -2,6 +2,8 @@ package com.example.smartmenu.retrofit
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.smartmenu.view_states.LoadingViewState
+import com.example.smartmenu.view_states.LoadingViewState.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -20,7 +22,7 @@ class HerokuViewModel : ViewModel() {
     val recipesLiveData = MutableLiveData<MutableList<ResponseRecipeBody>>()
     val ingredientsLiveData = MutableLiveData<MutableList<ResponseIngredientsBody>>()
     val loadingIngredientsState =
-        MutableLiveData<LoadingIngredientsViewState>().default(LoadingIngredientsViewState.LoadedState)
+        MutableLiveData<LoadingViewState>().default(LoadedState)
 
 
     fun fetchRecipes(ingredients: List<String>) {
@@ -36,16 +38,16 @@ class HerokuViewModel : ViewModel() {
             val ingredients = repository.getAllIngredients()
             if (ingredients == null) {
                 launch(Dispatchers.Main) {
-                    loadingIngredientsState.set(LoadingIngredientsViewState.ErrorState)
+                    loadingIngredientsState.set(ErrorState)
                 }
             } else {
                 if (ingredients.count() == 0) {
                     launch(Dispatchers.Main) {
-                        loadingIngredientsState.set(LoadingIngredientsViewState.NoItemsState)
+                        loadingIngredientsState.set(NoItemsState)
                     }
                 } else {
                     launch(Dispatchers.Main) {
-                        loadingIngredientsState.set(LoadingIngredientsViewState.LoadedState)
+                        loadingIngredientsState.set(LoadedState)
                     }
                     ingredientsLiveData.postValue(ingredients!!)
                 }
